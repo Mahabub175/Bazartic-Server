@@ -1,4 +1,3 @@
-import { FastifyInstance } from "fastify";
 import mongoose from "mongoose";
 import { IUser } from "./user.interface";
 import { userModel } from "./user.model";
@@ -23,23 +22,10 @@ const createBulkUsersService = async (users: Partial<IUser>[]) => {
 
 // Get all users with optional pagination & search
 const getAllUserService = async (
-  fastify: FastifyInstance,
   searchFields: string[],
   searchText?: string,
-  filters?: Record<string, any>
+  filters?: Record<string, any>,
 ) => {
-  // const key = `users:${JSON.stringify({ searchFields, searchText, filters })}`;
-
-  // return cacheAsync(
-  //   fastify,
-  //   key,
-  //   async () => {
-  //     const query = userModel.find();
-  //     return paginateAndSort(query, { searchFields, searchText, filters });
-  //   },
-  //   60
-  // );
-
   const query = userModel
     .find()
     .select("-password")
@@ -89,7 +75,7 @@ const getSingleUserService = async (userId: string) => {
 // Update single user
 const updateSingleUserService = async (
   userId: string | number,
-  userData: Partial<IUser>
+  userData: Partial<IUser>,
 ) => {
   const queryId =
     typeof userId === "string" ? new mongoose.Types.ObjectId(userId) : userId;
@@ -117,7 +103,7 @@ const updateSingleUserService = async (
       .findByIdAndUpdate(
         queryId,
         { $set: userData },
-        { new: true, runValidators: true, context: "query" }
+        { new: true, runValidators: true, context: "query" },
       )
       .exec();
 
@@ -163,7 +149,7 @@ const toggleManyUserStatusService = async (userIds: string[]) => {
           status: { $not: "$status" },
         },
       },
-    ]
+    ],
   );
 
   if (result.matchedCount === 0)
@@ -229,7 +215,7 @@ const toggleManyUserSoftDeleteService = async (userIds: string[]) => {
           isDeleted: { $not: "$isDeleted" },
         },
       },
-    ]
+    ],
   );
 
   if (result.matchedCount === 0) {
@@ -255,7 +241,20 @@ const recoverUserService = async (userIds: string[]) => {
 
   const result = await userModel.updateMany(
     { _id: { $in: validIds } },
-    { $set: { isDeleted: false } }
+    { $set: { isDeleted: false } },
+  );
+
+  return {
+    modifiedCount: result.modifiedCount,
+    matchedCount: result.matchedCount,
+  };
+};
+
+// Recover all user
+const recoverAllUserService = async () => {
+  const result = await userModel.updateMany(
+    { isDeleted: true },
+    { $set: { isDeleted: false } },
   );
 
   return {
@@ -272,13 +271,13 @@ const softDeleteManyUsersService = async (userIds: (string | number)[]) => {
     typeof id === "string" && mongoose.Types.ObjectId.isValid(id)
       ? new mongoose.Types.ObjectId(id)
       : typeof id === "number"
-      ? id
-      : throwError(`Invalid user ID: ${id}`, 400)
+        ? id
+        : throwError(`Invalid user ID: ${id}`, 400),
   );
 
   const result = await userModel.updateMany(
     { _id: { $in: queryIds }, isDeleted: false },
-    { $set: { isDeleted: true } }
+    { $set: { isDeleted: true } },
   );
 
   if (!result.modifiedCount) throwError("No users were soft deleted", 404);
@@ -350,6 +349,7 @@ export const userServices = {
   toggleUserSoftDeleteService,
   toggleManyUserSoftDeleteService,
   softDeleteManyUsersService,
+  recoverAllUserService,
   recoverUserService,
   hardDeleteSingleUserService,
   hardDeleteManyUsersService,

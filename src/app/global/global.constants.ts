@@ -13,6 +13,8 @@ export enum ModelNames {
   BRAND = "brand",
   COMPARE = "compare",
   COUPON = "coupon",
+  ATTRIBUTE = "attribute",
+  ATTRIBUTE_OPTION = "attributeOption",
 }
 
 export const allowedFileTypes = ["image/jpeg", "image/png", "image/jpg"];

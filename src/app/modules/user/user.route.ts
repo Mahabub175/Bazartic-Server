@@ -7,61 +7,67 @@ export const userRoutes = async (app: FastifyInstance) => {
   app.post(
     "/user/",
     { preHandler: authorize(ModelNames.USER, StandardActions.CREATE) },
-    userControllers.createUserController
+    userControllers.createUserController,
   );
 
   app.post(
     "/user/bulk/",
     { preHandler: authorize(ModelNames.USER, StandardActions.CREATE) },
-    userControllers.createBulkUsersController
+    userControllers.createBulkUsersController,
   );
 
   app.post(
     "/user/recover/",
     { preHandler: authorize(ModelNames.USER, StandardActions.RECOVER) },
-    userControllers.recoverUserController
+    userControllers.recoverUserController,
+  );
+
+  app.post(
+    "/user/recover/all/",
+    { preHandler: authorize(ModelNames.USER, StandardActions.RECOVER) },
+    userControllers.recoverAllUserController,
   );
 
   app.get(
     "/user/",
     { preHandler: authorize(ModelNames.USER, StandardActions.READ_MANY) },
-    userControllers.getAllUserController
+    userControllers.getAllUserController,
   );
 
   app.get(
     "/user/:userId/",
     { preHandler: authorize(ModelNames.USER, StandardActions.READ) },
-    userControllers.getSingleUserController
+    userControllers.getSingleUserController,
   );
 
   app.patch(
     "/user/:userId/",
     { preHandler: authorize(ModelNames.USER, StandardActions.UPDATE) },
-    userControllers.updateSingleUserController
+    userControllers.updateSingleUserController,
   );
 
   app.patch(
     "/user/:userId/status/toggle/",
     { preHandler: authorize(ModelNames.USER, StandardActions.UPDATE) },
-    userControllers.toggleUserStatusController
+    userControllers.toggleUserStatusController,
   );
 
   app.patch(
     "/user/status/toggle/many/",
     { preHandler: authorize(ModelNames.USER, StandardActions.UPDATE_MANY) },
-    userControllers.toggleManyUserStatusController
+    userControllers.toggleManyUserStatusController,
   );
 
   app.patch(
     "/user/:userId/soft/",
     { preHandler: authorize(ModelNames.USER, StandardActions.SOFT_DELETE) },
-    userControllers.softDeleteSingleUserController
+    userControllers.softDeleteSingleUserController,
   );
 
   app.patch(
     "/user/:userId/soft/toggle/",
     { preHandler: authorize(ModelNames.USER, StandardActions.SOFT_DELETE) },
-    userControllers.toggleUserSoftDeleteController
+    userControllers.toggleUserSoftDeleteController,
   );
 
   app.patch(
@@ -69,7 +75,7 @@ export const userRoutes = async (app: FastifyInstance) => {
     {
       preHandler: authorize(ModelNames.USER, StandardActions.SOFT_DELETE_MANY),
     },
-    userControllers.toggleManyUserSoftDeleteController
+    userControllers.toggleManyUserSoftDeleteController,
   );
 
   app.patch(
@@ -77,13 +83,13 @@ export const userRoutes = async (app: FastifyInstance) => {
     {
       preHandler: authorize(ModelNames.USER, StandardActions.SOFT_DELETE_MANY),
     },
-    userControllers.softDeleteManyUserController
+    userControllers.softDeleteManyUserController,
   );
 
   app.delete(
     "/user/:userId/",
     { preHandler: authorize(ModelNames.USER, StandardActions.HARD_DELETE) },
-    userControllers.hardDeleteSingleUserController
+    userControllers.hardDeleteSingleUserController,
   );
 
   app.delete(
@@ -91,6 +97,6 @@ export const userRoutes = async (app: FastifyInstance) => {
     {
       preHandler: authorize(ModelNames.USER, StandardActions.HARD_DELETE_MANY),
     },
-    userControllers.hardDeleteManyUserController
+    userControllers.hardDeleteManyUserController,
   );
 };

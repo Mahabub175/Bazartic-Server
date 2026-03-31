@@ -12,7 +12,7 @@ import { authServices } from "../auth/auth.service";
 // Create a user
 const createUserController = async (
   req: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) => {
   try {
     const data = parseMultipartBody(req.body as Record<string, any>);
@@ -23,8 +23,8 @@ const createUserController = async (
     const images = Array.isArray(imagesPath)
       ? imagesPath
       : imagesPath
-      ? [imagesPath]
-      : [];
+        ? [imagesPath]
+        : [];
 
     const formData: Partial<IUser> = {
       ...data,
@@ -49,7 +49,7 @@ const createUserController = async (
     return responseSuccess(
       reply,
       responseData,
-      "User Created & Logged In Successfully!"
+      "User Created & Logged In Successfully!",
     );
   } catch (error: any) {
     throw error;
@@ -59,7 +59,7 @@ const createUserController = async (
 // Create bulk users
 const createBulkUsersController = async (
   req: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) => {
   try {
     const users = parseMultipartBody(req.body as Record<string, any>);
@@ -73,14 +73,14 @@ const createBulkUsersController = async (
     return responseSuccess(
       reply,
       createdUsers,
-      `${createdUsers.length} users created successfully`
+      `${createdUsers.length} users created successfully`,
     );
   } catch (err: any) {
     return responseError(
       reply,
       err.message || "Failed to create users",
       500,
-      err
+      err,
     );
   }
 };
@@ -88,20 +88,19 @@ const createBulkUsersController = async (
 // Get all users
 const getAllUserController = async (
   req: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) => {
   try {
     const searchFields = ["name"];
 
     const { filters, searchText } = parseQueryFilters(
-      req.query as Record<string, any>
+      req.query as Record<string, any>,
     );
 
     const result = await userServices.getAllUserService(
-      req.server,
       searchFields,
       searchText,
-      filters
+      filters,
     );
 
     return responseSuccess(reply, result, "Users Fetched Successfully!");
@@ -113,7 +112,7 @@ const getAllUserController = async (
 // Get single user by ID
 const getSingleUserController = async (
   req: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) => {
   try {
     const params = req.params as { userId: string };
@@ -128,7 +127,7 @@ const getSingleUserController = async (
 // Update single user
 const updateSingleUserController = async (
   req: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) => {
   try {
     const params = req.params as { userId: string };
@@ -151,8 +150,8 @@ const updateSingleUserController = async (
     const images = Array.isArray(imageResult)
       ? imageResult
       : imageResult
-      ? [imageResult]
-      : [];
+        ? [imageResult]
+        : [];
 
     if (images.length > 0) {
       userData.images = images;
@@ -160,7 +159,7 @@ const updateSingleUserController = async (
 
     const result = await userServices.updateSingleUserService(
       params.userId,
-      userData as IUser
+      userData as IUser,
     );
 
     return responseSuccess(reply, result, "User Updated Successfully!");
@@ -173,7 +172,7 @@ const updateSingleUserController = async (
 // Toggle user status
 const toggleUserStatusController = async (
   req: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) => {
   try {
     const params = req.params as { userId: string };
@@ -188,7 +187,7 @@ const toggleUserStatusController = async (
 // Toggle many user status
 const toggleManyUserStatusController = async (
   req: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) => {
   try {
     const userIds = req.body as string[];
@@ -197,7 +196,7 @@ const toggleManyUserStatusController = async (
       return responseError(
         reply,
         "Invalid or empty User IDs array provided",
-        500
+        500,
       );
     }
 
@@ -206,7 +205,7 @@ const toggleManyUserStatusController = async (
     return responseSuccess(
       reply,
       null,
-      `Toggled Status for ${result.modifiedCount} Users Successfully! `
+      `Toggled Status for ${result.modifiedCount} Users Successfully! `,
     );
   } catch (error: any) {
     throw error;
@@ -216,7 +215,7 @@ const toggleManyUserStatusController = async (
 // Soft delete single user
 const softDeleteSingleUserController = async (
   req: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) => {
   try {
     const params = req.params as { userId: string };
@@ -231,7 +230,7 @@ const softDeleteSingleUserController = async (
 // Toggle user soft delete
 const toggleUserSoftDeleteController = async (
   req: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) => {
   try {
     const params = req.params as { userId: string };
@@ -240,7 +239,7 @@ const toggleUserSoftDeleteController = async (
     return responseSuccess(
       reply,
       null,
-      "User Soft Delete Toggled Successfully!"
+      "User Soft Delete Toggled Successfully!",
     );
   } catch (error: any) {
     throw error;
@@ -250,7 +249,7 @@ const toggleUserSoftDeleteController = async (
 // Toggle many user soft delete
 const toggleManyUserSoftDeleteController = async (
   req: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) => {
   try {
     const userIds = req.body as string[];
@@ -259,7 +258,7 @@ const toggleManyUserSoftDeleteController = async (
       return responseError(
         reply,
         "Invalid or empty User IDs array provided",
-        500
+        500,
       );
     }
     const result = await userServices.toggleManyUserSoftDeleteService(userIds);
@@ -267,7 +266,25 @@ const toggleManyUserSoftDeleteController = async (
     return responseSuccess(
       reply,
       null,
-      `Toggled Soft Delete for ${result.modifiedCount} Users Successfully!`
+      `Toggled Soft Delete for ${result.modifiedCount} Users Successfully!`,
+    );
+  } catch (error: any) {
+    throw error;
+  }
+};
+
+// Recover all user
+const recoverAllUserController = async (
+  req: FastifyRequest,
+  reply: FastifyReply,
+) => {
+  try {
+    const result = await userServices.recoverAllUserService();
+
+    return responseSuccess(
+      reply,
+      null,
+      `Recovered ${result.modifiedCount} Users Successfully!`,
     );
   } catch (error: any) {
     throw error;
@@ -277,7 +294,7 @@ const toggleManyUserSoftDeleteController = async (
 // Recover user
 const recoverUserController = async (
   req: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) => {
   try {
     const userIds = req.body as string[];
@@ -286,7 +303,7 @@ const recoverUserController = async (
       return responseError(
         reply,
         "Invalid or empty User IDs array provided",
-        500
+        500,
       );
     }
 
@@ -295,7 +312,7 @@ const recoverUserController = async (
     return responseSuccess(
       reply,
       null,
-      `Recovered ${result.modifiedCount} Users Successfully!`
+      `Recovered ${result.modifiedCount} Users Successfully!`,
     );
   } catch (error: any) {
     throw error;
@@ -305,7 +322,7 @@ const recoverUserController = async (
 // Soft delete many users
 const softDeleteManyUserController = async (
   req: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) => {
   try {
     const userIds = req.body as string[];
@@ -314,7 +331,7 @@ const softDeleteManyUserController = async (
       return responseError(
         reply,
         "Invalid or empty User IDs array provided",
-        500
+        500,
       );
     }
 
@@ -323,7 +340,7 @@ const softDeleteManyUserController = async (
     return responseSuccess(
       reply,
       null,
-      `Soft Deleted ${result.modifiedCount} Users Successfully!`
+      `Soft Deleted ${result.modifiedCount} Users Successfully!`,
     );
   } catch (error: any) {
     throw error;
@@ -333,7 +350,7 @@ const softDeleteManyUserController = async (
 // Hard delete single user
 const hardDeleteSingleUserController = async (
   req: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) => {
   try {
     const params = req.params as { userId: string };
@@ -348,7 +365,7 @@ const hardDeleteSingleUserController = async (
 // Hard delete many users
 const hardDeleteManyUserController = async (
   req: FastifyRequest,
-  reply: FastifyReply
+  reply: FastifyReply,
 ) => {
   try {
     const userIds = req.body as string[];
@@ -357,7 +374,7 @@ const hardDeleteManyUserController = async (
       return responseError(
         reply,
         "Invalid or empty User IDs array provided",
-        500
+        500,
       );
     }
 
@@ -366,7 +383,7 @@ const hardDeleteManyUserController = async (
     return responseSuccess(
       reply,
       null,
-      `Deleted ${result.deletedCount} Users Successfully!`
+      `Deleted ${result.deletedCount} Users Successfully!`,
     );
   } catch (error: any) {
     throw error;
@@ -386,6 +403,7 @@ export const userControllers = {
   toggleManyUserSoftDeleteController,
   softDeleteManyUserController,
   recoverUserController,
+  recoverAllUserController,
   hardDeleteSingleUserController,
   hardDeleteManyUserController,
 };

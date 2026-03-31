@@ -7,6 +7,8 @@ import { permissionRoutes } from "../modules/permission/permission.route";
 import { roleRoutes } from "../modules/role/role.route";
 import { categoryRoutes } from "../modules/category/category.route";
 import { brandRoutes } from "../modules/brand/brand.route";
+import { attributeOptionRoutes } from "../modules/attributeOption/attributeOption.route";
+import { attributeRoutes } from "../modules/attribute/attribute.route";
 
 export const router = async (app: FastifyInstance) => {
   const routes = [
@@ -18,6 +20,8 @@ export const router = async (app: FastifyInstance) => {
     uploadRoutes,
     categoryRoutes,
     brandRoutes,
+    attributeOptionRoutes,
+    attributeRoutes,
   ];
 
   for (const route of routes) {
